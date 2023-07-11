@@ -4,36 +4,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.DAO.UserDao;
+import ru.kata.spring.boot_security.demo.dao.UserDao;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-
     public final UserDao userDao;
-
     public final BCryptPasswordEncoder passwordEncoder;
-
     @Autowired
     public UserServiceImpl(UserDao userDao, BCryptPasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
     }
-
     @Override
     @Transactional
-    public void add(User user) {
-
+    public void addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.add(user);
     }
 
     @Override
     @Transactional
-    public void remove(Long id) {
-
+    public void removeUser(Long id) {
         userDao.remove(id);
     }
 
@@ -64,28 +58,24 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User getUserById(Long id) {
-
         return userDao.getUserById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<User> getAllUsers() {
-
         return userDao.getAllUsers();
     }
 
     @Override
     @Transactional
     public void removeRoleFromUser(Long userID, String roleName) {
-
         userDao.removeRoleFromUser(userID, roleName);
     }
 
     @Override
     @Transactional
     public void saveRoleToUser(Long userId, String roleName) {
-
         userDao.saveRoleToUser(userId, roleName);
     }
 }

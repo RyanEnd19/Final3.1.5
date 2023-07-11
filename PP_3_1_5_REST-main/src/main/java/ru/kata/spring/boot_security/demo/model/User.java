@@ -16,22 +16,16 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
     @Column(name = "username", nullable = false, unique = true)
     private String username;
-
     @Column(name = "lastname", nullable = false)
     private String lastname;
-
     @Column(name = "age", nullable = false)
     private byte age;
-
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-
     @Column(name = "password", nullable = false)
     private String password;
-
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
@@ -40,10 +34,8 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
-
     public User() {
     }
-
     public User(String username, String lastname, byte age, String email, String password) {
         this.username = username;
         this.lastname = lastname;
@@ -51,7 +43,6 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
     }
-
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -60,109 +51,86 @@ public class User implements UserDetails {
                 .map((Role role) -> new SimpleGrantedAuthority(role.getAuthority()))
                 .collect(Collectors.toSet());
     }
-
     @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
-
     @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
-
     @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
     @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;
     }
-
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     @Override
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String username) {
         this.username = username;
     }
-
     public String getLastname() {
         return lastname;
     }
-
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
-
     public byte getAge() {
         return age;
     }
-
     public void setAge(byte age) {
         this.age = age;
     }
-
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
-
     @Override
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
-
     public Set<Role> getRoles() {
         return roles;
     }
-
     @JsonIgnore
     public String getRolesToString() {
         StringBuilder allRoles = new StringBuilder();
         for (Role role : roles) {
             allRoles.append(role.getAuthority().replaceAll("ROLE_", "")).append(" ");
         }
-
         return allRoles.toString();
     }
-
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-
     public void addRole(Role role) {
         roles.add(role);
         role.addUser(this);
     }
-
     public void removeRole(Role role) {
         roles.remove(role);
         role.removeUser(this);
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -176,12 +144,10 @@ public class User implements UserDetails {
                 Objects.equals(password, user.password) &&
                 Objects.equals(roles, user.roles);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(id, username, lastname, age, email, password, roles);
     }
-
     @Override
     public String toString() {
         return "User{" +

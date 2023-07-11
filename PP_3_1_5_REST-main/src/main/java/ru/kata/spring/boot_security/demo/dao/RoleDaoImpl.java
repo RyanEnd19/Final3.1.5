@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.DAO;
+package ru.kata.spring.boot_security.demo.dao;
 
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Repository;
@@ -15,24 +15,19 @@ public class RoleDaoImpl implements RoleDao {
 
     @PersistenceContext
     private EntityManager entityManager;
-
     @Override
     public List<Role> getAllRoles() {
-
         List<Role> roles = entityManager.createQuery("from Role", Role.class).getResultList();
         return roles;
     }
 
     @Override
     public void createRole(Role role) {
-
         entityManager.persist(role);
-
     }
 
     @Override
     public Role getRoleByRoleName(String roleName) {
-
         Role findedRole = entityManager
                 .createQuery("from Role role where roleName = :roleName", Role.class)
                 .setParameter("roleName", roleName)

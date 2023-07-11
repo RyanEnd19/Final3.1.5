@@ -21,54 +21,41 @@ public class AdminRestController {
 
     @Autowired
     public AdminRestController(UserService userService, RoleService roleService) {
-
         this.userService = userService;
         this.roleService = roleService;
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getApiUsers() {
-
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
-
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteApiUser(@PathVariable Long id) {
-        userService.remove(id);
+        userService.removeUser(id);
         return new ResponseEntity<>("User with ID = " + id + " was deleted", HttpStatus.OK);
     }
-
-
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getApiUser(@PathVariable Long id) {
         User user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
-
     @GetMapping("/users/auth")
     public ResponseEntity<User> getApiAuthUser(@AuthenticationPrincipal User user) {
-
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-
         user.setRoles(roleService.getRoles(user.getRoles()));
-
-        userService.add(user);
-
+        userService.addUser(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable Long id) {
-
         user.setRoles(roleService.getRoles(user.getRoles()));
         user.setId(id);
-
         userService.updateUser(user);
-
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
