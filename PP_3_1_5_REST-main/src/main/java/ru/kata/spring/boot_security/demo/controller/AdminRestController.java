@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.Role;
@@ -25,25 +26,33 @@ public class AdminRestController {
         this.roleService = roleService;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<List<User>> getApiUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteApiUser(@PathVariable Long id) {
         userService.removeUser(id);
         return new ResponseEntity<>("User with ID = " + id + " was deleted", HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getApiUser(@PathVariable Long id) {
         User user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users/auth")
     public ResponseEntity<User> getApiAuthUser(@AuthenticationPrincipal User user) {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         user.setRoles(roleService.getRoles(user.getRoles()));
@@ -51,6 +60,7 @@ public class AdminRestController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable Long id) {
         user.setRoles(roleService.getRoles(user.getRoles()));
@@ -59,6 +69,7 @@ public class AdminRestController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users/roles")
     public ResponseEntity<List<Role>> apiGetAllRoles() {
         return new ResponseEntity<>(roleService.getAllRoles(), HttpStatus.OK);
