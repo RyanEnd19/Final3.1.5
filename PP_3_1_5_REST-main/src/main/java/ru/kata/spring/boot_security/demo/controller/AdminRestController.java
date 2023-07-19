@@ -13,7 +13,7 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/admin/api")
 public class AdminRestController {
 
     private final UserService userService;

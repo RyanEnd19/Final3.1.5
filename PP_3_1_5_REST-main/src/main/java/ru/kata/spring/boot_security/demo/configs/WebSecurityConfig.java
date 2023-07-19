@@ -11,45 +11,44 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.kata.spring.boot_security.demo.configs.SuccessUserHandler;
 
-@EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private SuccessUserHandler successUserHandler;
 
-    private final UserDetailsService userDetailsService;
+    @EnableWebSecurity
+    public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+        @Autowired
+        private SuccessUserHandler successUserHandler;
 
-    @Autowired
-    public WebSecurityConfig(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+        private final UserDetailsService userDetailsService;
+
+        @Autowired
+        public WebSecurityConfig(UserDetailsService userDetailsService) {
+            this.userDetailsService = userDetailsService;
+        }
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http
+                    .authorizeRequests()
+                    .antMatchers("/admin/**").hasRole("ADMIN")
+                    .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
+                    .anyRequest().authenticated()
+                    .and()
+                    .formLogin()
+                    .successHandler(successUserHandler)
+                    .permitAll()
+                    .and()
+                    .logout()
+                    .permitAll();
+
+            http.csrf().disable();
+        }
+
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            auth.userDetailsService(userDetailsService);
+        }
+
+        @Bean
+        public BCryptPasswordEncoder getPasswordEncoder() {
+            return new BCryptPasswordEncoder();
+        }
     }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/api/users/self").hasAnyRole("ADMIN", "USER")
-                .antMatchers("/api/**").hasRole("ADMIN")
-                .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .successHandler(successUserHandler)
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
-
-        http.csrf().disable();
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
-    }
-
-    @Bean
-    public BCryptPasswordEncoder getPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-}
